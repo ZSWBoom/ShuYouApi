@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.module.user.shuyou.mapper.BooksInfoMapper" >
+    <resultMap id="BaseResultMap" type="com.module.user.shuyou.dataModel.BookModel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="owner" property="owner" jdbcType="VARCHAR" />
+        <result column="bookName" property="bookName" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="des" property="des" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="imgUrl" property="imgUrl" jdbcType="VARCHAR" />
+        <result column="holder" property="holder" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="bookAuthor" property="bookAuthor" jdbcType="VARCHAR" />
+        <result column="hot" property="hot" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="CommentResultMap" type="com.module.user.shuyou.dataModel.Comment" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="bookid" property="bookid" jdbcType="INTEGER" />
+        <result column="userName" property="userName" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+        <result column="score" property="score" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.module.user.model.GoodsInfo" extends="BaseResultMap" >
+        <result column="goods_banner" property="goodsBanner" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    id, owner, bookName, type, des, code,
+    imgUrl, holder, price, status, createDate, bookAuthor, hot
+  </sql>
+    <sql id="Blob_Column_List" >
+    goods_banner
+  </sql>
+
+    <insert id="insert" parameterType="com.module.user.shuyou.dataModel.AddBookDataModel" >
+      INSERT INTO bookdata (owner, bookName, type, des, code,
+      imgUrl, price, status, createDate, bookAuthor, hot, renewTimes, holder)
+       VALUES (#{owner,jdbcType=INTEGER}, #{bookName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{des,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},
+       #{imgUrl,jdbcType=VARCHAR},#{price,jdbcType=VARCHAR}, 0, #{createDate,jdbcType=TIMESTAMP}, #{bookAuthor,jdbcType=VARCHAR}, #{hot,jdbcType=VARCHAR}, 2, #{owner,jdbcType=INTEGER});
+  </insert>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+        where bd.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getBookCommentById" resultMap="CommentResultMap" parameterType="java.lang.Integer" >
+        select bc.id, bookid, a.userName as userName, content, date, score
+        from bookcomment as bc
+        INNER JOIN usertable as a on a.id = bc.userId
+        where bookid = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectBooksList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+        LIMIT #{beginIndex} ,#{pageSize}
+    </select>
+    <select id="selectAllBooksList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+    </select>
+
+    <select id="selectBooksListByType" resultMap="BaseResultMap" parameterType="java.util.Map" >
+select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+        where bd.type = #{type} LIMIT #{beginIndex} ,#{pageSize}
+    </select>
+    <select id="selectAllBooksListByType" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+        where bd.type = #{type}
+    </select>
+
+    <select id="selectBooksListByKeyword" resultMap="BaseResultMap" parameterType="java.util.Map" >
+        select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+        where bookName LIKE CONCAT('%', #{keyword}, '%') LIMIT #{beginIndex} ,#{pageSize}
+    </select>
+
+    <select id="selectAllByKeyword" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select bd.id, a.userName as owner, bookName,
+        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+        status, createDate, bookAuthor, hot
+         from bookdata as bd
+        INNER JOIN usertable as a on a.id = bd.`owner`
+        INNER JOIN usertable as b on b.id = bd.holder
+        INNER JOIN booktype as c on c.id = bd.type
+        where bookName LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+</mapper>

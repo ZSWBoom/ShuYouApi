@@ -1,48 +1,33 @@
 package com.module.user.shuyou.dataModel;
 
 import java.util.Date;
-import java.util.List;
 
-public class BookModel {
+public class AddBookDataModel {
 
-
-    private Integer id;
-    private String owner;
+    private Integer owner;
     private String bookName;
-    private String type;
+    private Integer type;
     private String des;
     private String code;
     private String imgUrl;
-    private String holder;
     private String price;
-    private Integer status;
     private Date createDate;
     private String bookAuthor;
     private String hot;
-    private Integer renewTimes;
-    private List<Comment> comment;
 
-    public List<Comment> getComment() {
-        return comment;
+    public String getHot() {
+        return hot;
     }
 
-    public void setComment(List<Comment> comment) {
-        this.comment = comment;
+    public void setHot(String hot) {
+        this.hot = hot;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getOwner() {
+    public Integer getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Integer owner) {
         this.owner = owner;
     }
 
@@ -54,11 +39,11 @@ public class BookModel {
         this.bookName = bookName;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -86,28 +71,12 @@ public class BookModel {
         this.imgUrl = imgUrl;
     }
 
-    public String getHolder() {
-        return holder;
-    }
-
-    public void setHolder(String holder) {
-        this.holder = holder;
-    }
-
     public String getPrice() {
         return price;
     }
 
     public void setPrice(String price) {
         this.price = price;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
     public Date getCreateDate() {
@@ -126,29 +95,4 @@ public class BookModel {
         this.bookAuthor = bookAuthor;
     }
 
-    public String getHot() {
-        return hot;
-    }
-
-    public void setHot(String hot) {
-        this.hot = hot;
-    }
-
-    public Integer getRenewTimes() {
-        return renewTimes;
-    }
-
-    public void setRenewTimes(Integer renewTimes) {
-        this.renewTimes = renewTimes;
-    }
-
-    public Integer getMaxPage() {
-        return maxPage;
-    }
-
-    public void setMaxPage(Integer maxPage) {
-        this.maxPage = maxPage;
-    }
-
-    private Integer maxPage;
 }

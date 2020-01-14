@@ -9,6 +9,7 @@ import com.module.user.shuyou.domain.RegisterReq;
 import com.module.user.shuyou.service.UserService;
 import com.module.user.utils.Md5Utils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.util.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,11 @@ public class UserController extends BaseController {
     public BaseResp register(@RequestBody RegisterReq req) {
         BaseResp resp = new BaseResp();
         String email = req.getEmail();
+        if(TextUtils.isEmpty(email)){
+            resp.setStatus(-1);
+            resp.setMessage("请输入账号");
+            return resp;
+        }
         UserInfo userInfo = this.userService.selectByEmail(email);
         if (userInfo != null) {
             resp.setStatus(-1);
@@ -34,7 +40,13 @@ public class UserController extends BaseController {
             return resp;
         }
 
-        String userName = req.getUserName();
+        if(!email.contains("@myhexin.com")) {
+            resp.setStatus(-1);
+            resp.setMessage("请输入正确格式账号");
+            return resp;
+        }
+
+        String userName = email.replace("@myhexin.com", "");
         String password = req.getPassword();
         String phone = req.getPhoneNum();
 
