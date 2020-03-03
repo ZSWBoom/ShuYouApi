@@ -1,14 +1,14 @@
 package com.module.user.shuyou.controller;
 
-import com.module.user.controller.BaseController;
-import com.module.user.domain.BaseResp;
 import com.module.user.shuyou.dataModel.BookModel;
 import com.module.user.shuyou.dataModel.Comment;
 import com.module.user.shuyou.dataModel.AddBookDataModel;
+import com.module.user.shuyou.domain.BaseResp;
 import com.module.user.shuyou.domain.GetBookListByKeywordReq;
 import com.module.user.shuyou.domain.GetBooksDetailReq;
 import com.module.user.shuyou.domain.GetBooksListReq;
 import com.module.user.shuyou.service.BookDataService;
+import org.apache.http.util.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +29,7 @@ public class BookDataController extends BaseController {
 
     /**
      * 查询数据库所有书籍数据列表
+     *
      * @param req
      * @return
      */
@@ -36,6 +37,11 @@ public class BookDataController extends BaseController {
     @ResponseBody
     public BaseResp<List<BookModel>> getBooks(@RequestBody GetBooksListReq req) {
         BaseResp resp = new BaseResp();
+        if (req.getPageNo() == null) {
+            resp.setStatus(-1);
+            resp.setMessage("参数错误");
+            return resp;
+        }
 
         List<BookModel> list = this.booksInfoService.getBookDataList(req.getPageNo());
         if ((list == null) || (list.size() == 0)) {
@@ -45,7 +51,7 @@ public class BookDataController extends BaseController {
         }
 
         for (BookModel info : list) {
-            info.setMaxPage(Integer.valueOf(this.booksInfoService.getAllGoodsList().size() / 6 + 1));
+            info.setMaxPage(this.booksInfoService.getAllGoodsList().size() / 6 + 1);
         }
 
         resp.setStatus(0);
@@ -56,6 +62,7 @@ public class BookDataController extends BaseController {
 
     /**
      * 根据书籍类型查询书籍列表
+     *
      * @param req
      * @return
      */
@@ -63,6 +70,11 @@ public class BookDataController extends BaseController {
     @ResponseBody
     public BaseResp<List<BookModel>> getBookByType(@RequestBody GetBooksListReq req) {
         BaseResp resp = new BaseResp();
+        if (req.getType() == null || req.getPageNo() == null) {
+            resp.setStatus(-1);
+            resp.setMessage("参数错误");
+            return resp;
+        }
 
         List<BookModel> list = this.booksInfoService.getBookDataListByType(req.getType(), req.getPageNo());
         if ((list == null) || (list.size() == 0)) {
@@ -72,7 +84,7 @@ public class BookDataController extends BaseController {
         }
 
         for (BookModel info : list) {
-            info.setMaxPage(Integer.valueOf(this.booksInfoService.getAllGoodsListByType(req.getType()).size() / 6 + 1));
+            info.setMaxPage(this.booksInfoService.getAllGoodsListByType(req.getType()).size() / 6 + 1);
         }
 
         resp.setStatus(0);
@@ -83,6 +95,7 @@ public class BookDataController extends BaseController {
 
     /**
      * 查询书籍详细内容数据
+     *
      * @param req
      * @return
      */
@@ -90,6 +103,11 @@ public class BookDataController extends BaseController {
     @ResponseBody
     public BaseResp<BookModel> getBooksDetail(@RequestBody GetBooksDetailReq req) {
         BaseResp resp = new BaseResp();
+        if (req.getId() == null) {
+            resp.setStatus(-1);
+            resp.setMessage("参数错误");
+            return resp;
+        }
 
         BookModel booksInfo = this.booksInfoService.getBookDetail(req.getId());
         if (booksInfo == null) {
@@ -108,6 +126,7 @@ public class BookDataController extends BaseController {
 
     /**
      * 书名模糊查询
+     *
      * @param req
      * @return
      */
@@ -115,6 +134,11 @@ public class BookDataController extends BaseController {
     @ResponseBody
     public BaseResp<List<BookModel>> getBooksListByKeyword(@RequestBody GetBookListByKeywordReq req) {
         BaseResp resp = new BaseResp();
+        if (req.getKeyword() == null || req.getPageNo() == null) {
+            resp.setStatus(-1);
+            resp.setMessage("参数错误");
+            return resp;
+        }
 
         List<BookModel> list = this.booksInfoService.getBookListByKeyword(req.getKeyword(), req.getPageNo());
         if ((list == null) || (list.size() == 0)) {
@@ -139,14 +163,40 @@ public class BookDataController extends BaseController {
     @RequestMapping(value = {"/addBook"}, method = {org.springframework.web.bind.annotation.RequestMethod.POST})
     @ResponseBody
     public BaseResp<Integer> addBook(@RequestParam("owner") Integer owner,
-                            @RequestParam("bookName") String bookName,
-                            @RequestParam("type") Integer type,
-                            @RequestParam("des") String des,
-                            @RequestParam("code") String code,
-                            @RequestParam("imgFile") CommonsMultipartFile fileUpload,
-                            @RequestParam("price") String price,
-                            @RequestParam("bookAuthor") String bookAuthor) {
+                                     @RequestParam("bookName") String bookName,
+                                     @RequestParam("type") Integer type,
+                                     @RequestParam("des") String des,
+                                     @RequestParam("code") String code,
+                                     @RequestParam("imgFile") CommonsMultipartFile fileUpload,
+                                     @RequestParam("price") String price,
+                                     @RequestParam("bookAuthor") String bookAuthor) {
         BaseResp resp = new BaseResp();
+        if (TextUtils.isEmpty(code)) {
+            resp.setStatus(-1);
+            resp.setMessage("书籍二维码不允许为空");
+            return resp;
+        }
+        if (TextUtils.isEmpty(bookName)) {
+            resp.setStatus(-1);
+            resp.setMessage("书籍名称不允许为空");
+            return resp;
+        }
+        if (owner == null) {
+            resp.setStatus(-1);
+            resp.setMessage("书籍拥有者不允许为空");
+            return resp;
+        }
+        if (type == null) {
+            resp.setStatus(-1);
+            resp.setMessage("书籍类型不允许为空");
+            return resp;
+        }
+        if (TextUtils.isEmpty(price)) {
+            resp.setStatus(-1);
+            resp.setMessage("书籍价格不允许为空");
+            return resp;
+        }
+
         AddBookDataModel addBookDataModel = new AddBookDataModel();
         String imgUrl;
         try {

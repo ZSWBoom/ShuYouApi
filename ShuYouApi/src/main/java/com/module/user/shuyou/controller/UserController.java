@@ -1,13 +1,11 @@
 package com.module.user.shuyou.controller;
 
-import com.module.user.controller.BaseController;
-import com.module.user.domain.BaseResp;
-
 import com.module.user.shuyou.dataModel.UserInfo;
+import com.module.user.shuyou.domain.BaseResp;
 import com.module.user.shuyou.domain.LoginReq;
 import com.module.user.shuyou.domain.RegisterReq;
 import com.module.user.shuyou.service.UserService;
-import com.module.user.utils.Md5Utils;
+import com.module.user.shuyou.utils.Md5Utils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.util.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +61,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = {"/login"}, method = {org.springframework.web.bind.annotation.RequestMethod.POST})
     @ResponseBody
-    public BaseResp<com.module.user.model.UserInfo> loginByPwd(@RequestBody LoginReq req) {
+    public BaseResp<UserInfo> loginByPwd(@RequestBody LoginReq req) {
         BaseResp resp = new BaseResp();
 
         String email = req.getEmail();

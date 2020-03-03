@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.module.user.shuyou.mapper.BooksBorrowMapper" >
+
+    <resultMap id="ApplyTableMap" type="com.module.user.shuyou.dataModel.ApplyDataModel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="bookid" property="bookid" jdbcType="INTEGER" />
+        <result column="create_user" property="create_user" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="createtime" property="createtime" jdbcType="VARCHAR" />
+        <result column="handletime" property="handletime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BorrowTableResultMap" type="com.module.user.shuyou.dataModel.BorrowDataModel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="userid" property="userid" jdbcType="INTEGER" />
+        <result column="bookid" property="bookid" jdbcType="INTEGER" />
+        <result column="borrow_date" property="borrow_date" jdbcType="VARCHAR" />
+        <result column="expect_return_date" property="expect_return_date" jdbcType="VARCHAR" />
+        <result column="real_return_date" property="real_return_date" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="renew_count" property="renew_count" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="PendDataMap" type="com.module.user.shuyou.dataModel.PendDataModel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="bookid" property="bookid" jdbcType="INTEGER" />
+        <result column="create_user" property="create_user" jdbcType="INTEGER" />
+        <result column="applyType" property="applyType" jdbcType="INTEGER" />
+        <result column="createtime" property="createtime" jdbcType="VARCHAR" />
+        <result column="handletime" property="handletime" jdbcType="VARCHAR" />
+        <result column="owner" property="owner" jdbcType="VARCHAR" />
+        <result column="bookName" property="bookName" jdbcType="VARCHAR" />
+        <result column="bookType" property="bookType" jdbcType="VARCHAR" />
+        <result column="des" property="des" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="imgUrl" property="imgUrl" jdbcType="VARCHAR" />
+        <result column="holder" property="holder" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="VARCHAR" />
+        <result column="bookStatus" property="bookStatus" jdbcType="INTEGER" />
+        <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="bookAuthor" property="bookAuthor" jdbcType="VARCHAR" />
+        <result column="hot" property="hot" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Apply_Column_List" >
+    id, bookid, create_user, type, createtime, handletime
+  </sql>
+
+    <insert id="insertApply" parameterType="java.util.Map" >
+  INSERT INTO apply_record_table (bookid, create_user, type, createtime)
+       VALUES (#{bookid} ,#{create_user}, 0, #{createtime})
+    </insert>
+
+    <insert id="addBorrowData" parameterType="java.util.Map" >
+  INSERT INTO borrow_table (userid, bookid, borrow_date, expect_return_date, type, renew_count)
+       VALUES (#{userid,jdbcType=INTEGER} ,#{bookid,jdbcType=INTEGER}, #{borrow_date,jdbcType=VARCHAR}, #{expect_date,jdbcType=VARCHAR}, 0, 0)
+    </insert>
+
+    <select id="selectApplyListById" resultMap="ApplyTableMap" parameterType="java.lang.Integer" >
+select id, bookid, create_user, type, createtime, handletime
+         from apply_record_table where id = #{id} and type = 0
+    </select>
+
+    <select id="selectApplyingByUserId" resultMap="ApplyTableMap" parameterType="java.lang.Integer" >
+select id, bookid, create_user, type, createtime, handletime
+         from apply_record_table where create_user = #{userId,jdbcType=INTEGER} and type = 0
+    </select>
+
+    <select id="selectApplyListByUserId" resultMap="ApplyTableMap" parameterType="java.lang.Integer" >
+select id, bookid, create_user, type, createtime, handletime
+         from apply_record_table where create_user = #{userId}
+    </select>
+
+    <select id="selectApplyList" resultMap="ApplyTableMap" parameterType="java.util.Map" >
+select id, bookid, create_user, type, createtime, handletime
+         from apply_record_table where create_user = #{userid} and bookid =  #{bookid} and type = 0
+    </select>
+
+    <select id="selectPendingListByUserId" resultMap="ApplyTableMap" parameterType="java.lang.Integer" >
+select a.id, a.bookid, create_user, a.type, createtime, handletime
+         from apply_record_table as a INNER JOIN bookdata as b on a.bookid = b.id where b.holder = #{userId} and a.type = 0
+    </select>
+
+    <select id="selectPendingDataById" resultMap="PendDataMap" parameterType="java.lang.Integer" >
+select a.id, a.bookid, a.create_user, a.type as applyType, a.createtime, a.handletime, b.owner, b.bookName, b.type as bookType, b.des, b.code, b.imgUrl, b.holder, b.price, b.status as bookStatus, b.createDate, b.bookAuthor, b.hot
+         from apply_record_table as a INNER JOIN bookdata as b on a.bookid = b.id where a.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getCanReturnBookList" resultMap="BorrowTableResultMap" parameterType="java.lang.Integer" >
+select id, userid, bookid, borrow_date, expect_return_date, real_return_date, type, renew_count
+         from borrow_table where userid = #{userId,jdbcType=INTEGER} and type = 0
+    </select>
+
+    <select id="getCanReturnBookData" resultMap="BorrowTableResultMap" parameterType="java.lang.Integer" >
+select id, userid, bookid, borrow_date, expect_return_date, real_return_date, type, renew_count
+         from borrow_table where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getReturnDataByBookId" resultMap="BorrowTableResultMap" parameterType="java.lang.Integer" >
+select id, userid, bookid, borrow_date, expect_return_date, real_return_date, type, renew_count
+         from borrow_table where userid = #{userid,jdbcType=INTEGER} and bookid = #{bookid,jdbcType=INTEGER} and type = 0
+    </select>
+
+    <update id="cancelApplyById" parameterType="java.lang.Integer" >
+    update apply_record_table set type = 2 where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="modifyBorrowBookData" parameterType="java.util.Map" >
+    update bookdata set holder = #{borrowUserId,jdbcType=INTEGER}, status = 1 where id = #{bookId,jdbcType=INTEGER}
+  </update>
+
+    <update id="modifyBorrowApplyData" parameterType="java.util.Map" >
+    update apply_record_table set handletime = #{handleTime,jdbcType=VARCHAR}, type = 1 where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="returnBookById" parameterType="java.util.Map" >
+   UPDATE borrow_table as a INNER JOIN bookdata as b ON a.bookid = b.id SET a.type = 1, a.real_return_date = NOW(), b.status = 0
+   WHERE a.id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="renewBookById" parameterType="java.util.Map" >
+   UPDATE borrow_table SET expect_return_date = #{expectDate,jdbcType=VARCHAR}, renew_count = #{renewCount,jdbcType=INTEGER}
+   WHERE id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

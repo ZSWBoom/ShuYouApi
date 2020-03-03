@@ -1,7 +1,5 @@
 package com.module.user.shuyou.domain;
 
-import com.module.user.domain.BaseReq;
-
 public class RegisterReq  extends BaseReq {
     private String userName;
     private String email;

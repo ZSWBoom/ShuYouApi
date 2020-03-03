@@ -4,12 +4,14 @@
     <resultMap id="BaseResultMap" type="com.module.user.shuyou.dataModel.BookModel" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="owner" property="owner" jdbcType="VARCHAR" />
+        <result column="ownerId" property="ownerId" jdbcType="INTEGER" />
         <result column="bookName" property="bookName" jdbcType="VARCHAR" />
         <result column="type" property="type" jdbcType="VARCHAR" />
         <result column="des" property="des" jdbcType="VARCHAR" />
         <result column="code" property="code" jdbcType="VARCHAR" />
         <result column="imgUrl" property="imgUrl" jdbcType="VARCHAR" />
         <result column="holder" property="holder" jdbcType="VARCHAR" />
+        <result column="holderId" property="holderId" jdbcType="INTEGER" />
         <result column="price" property="price" jdbcType="VARCHAR" />
         <result column="status" property="status" jdbcType="INTEGER" />
         <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
@@ -24,9 +26,7 @@
         <result column="date" property="date" jdbcType="TIMESTAMP" />
         <result column="score" property="score" jdbcType="VARCHAR" />
     </resultMap>
-    <resultMap id="ResultMapWithBLOBs" type="com.module.user.model.GoodsInfo" extends="BaseResultMap" >
-        <result column="goods_banner" property="goodsBanner" jdbcType="LONGVARCHAR" />
-    </resultMap>
+
     <sql id="Base_Column_List" >
     id, owner, bookName, type, des, code,
     imgUrl, holder, price, status, createDate, bookAuthor, hot
@@ -37,14 +37,14 @@
 
     <insert id="insert" parameterType="com.module.user.shuyou.dataModel.AddBookDataModel" >
       INSERT INTO bookdata (owner, bookName, type, des, code,
-      imgUrl, price, status, createDate, bookAuthor, hot, renewTimes, holder)
+      imgUrl, price, status, createDate, bookAuthor, hot, holder)
        VALUES (#{owner,jdbcType=INTEGER}, #{bookName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{des,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},
-       #{imgUrl,jdbcType=VARCHAR},#{price,jdbcType=VARCHAR}, 0, #{createDate,jdbcType=TIMESTAMP}, #{bookAuthor,jdbcType=VARCHAR}, #{hot,jdbcType=VARCHAR}, 2, #{owner,jdbcType=INTEGER});
+       #{imgUrl,jdbcType=VARCHAR},#{price,jdbcType=VARCHAR}, 0, #{createDate,jdbcType=TIMESTAMP}, #{bookAuthor,jdbcType=VARCHAR}, #{hot,jdbcType=VARCHAR}, #{owner,jdbcType=INTEGER});
   </insert>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-select bd.id, a.userName as owner, bookName,
-        c.typeName as type, des, code,  bd.imgUrl, b.userName as holder, price,
+select bd.id, a.userName as owner, a.id as ownerId, bookName,
+        c.typeName as type, des, code, bd.imgUrl, b.userName as holder, b.id as holderId, price,
         status, createDate, bookAuthor, hot
          from bookdata as bd
         INNER JOIN usertable as a on a.id = bd.`owner`
@@ -68,6 +68,7 @@ select bd.id, a.userName as owner, bookName,
         INNER JOIN usertable as a on a.id = bd.`owner`
         INNER JOIN usertable as b on b.id = bd.holder
         INNER JOIN booktype as c on c.id = bd.type
+        ORDER BY bd.id
         LIMIT #{beginIndex} ,#{pageSize}
     </select>
     <select id="selectAllBooksList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

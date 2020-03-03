@@ -2,7 +2,7 @@ package com.module.user.dao.impl;
 
 import com.module.user.dao.AbstractBaseRedisDao;
 import com.module.user.dao.SmsDao;
-import com.module.user.model.VerifyCodeModel;
+import com.module.user.shuyou.dataModel.VerifyCodeModel;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;

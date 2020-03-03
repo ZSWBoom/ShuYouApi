@@ -1,7 +1,5 @@
 package com.module.user.shuyou.domain;
 
-import com.module.user.domain.BaseReq;
-
 public class GetBooksListReq extends BaseReq {
     private Integer type;
     private Integer pageNo;
